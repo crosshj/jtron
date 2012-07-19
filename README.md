@@ -1,4 +1,4 @@
-jtron
+jTron
 ========
 
 Tron designed for AI play over stdin/stdout.
