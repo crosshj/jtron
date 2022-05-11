@@ -7,8 +7,8 @@ _gaq.push(['_trackPageview']);
  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
  })();*/
 
-var FRAMEDELAY = 1000;
-var p1ai = false;
+var FRAMEDELAY = 100;
+var p1ai = true;
 
 function init()
 {

@@ -1,4 +1,6 @@
-
+/*
+	https://www.a1k0n.net/code/tron.html
+*/
 var FRAMEDELAY = 100;
 var p1ai = true;
 
