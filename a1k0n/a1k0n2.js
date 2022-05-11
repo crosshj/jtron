@@ -28,7 +28,7 @@ function init()
     map[x+y*w] = -1;
     ctx.fillRect(x*10, y*10, 9, 9);
   }
-  ctx.fillStyle='#111';
+  ctx.fillStyle='#333';
   for(var i=0;i<w-1;i++) { addWall(i,0); addWall(i,h-2); }
   for(j=0;j<h-1;j++) { addWall(0,j); addWall(w-2,j); }
 
