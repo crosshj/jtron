@@ -1,0 +1,137 @@
+/*
+
+http://www.colourlovers.com/palette/1280366/SOLFINDER?widths=0 << color theme
+
+
+
+*/
+
+body {
+	overflow: hidden;  /*disables scrollbars*/
+	font: normal 11px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	color: #000;
+	background: #9D957E;
+	margin-top: 20px;
+
+
+	/*    http://ie.microsoft.com/testdrive/graphics/cssgradientbackgroundmaker/    */
+
+	/* IE10 Consumer Preview */
+	background-image: -ms-radial-gradient(center top, ellipse farthest-corner, #34D1D1 0%, #450E2F 100%);
+
+	/* Mozilla Firefox */
+	background-image: -moz-radial-gradient(center top, ellipse farthest-corner, #34D1D1 0%, #450E2F 100%);
+
+	/* Opera */
+	background-image: -o-radial-gradient(center top, ellipse farthest-corner, #34D1D1 0%, #450E2F 100%);
+
+	/* Webkit (Safari/Chrome 10) */
+	background-image: -webkit-gradient(radial, center top, 0, center top, 561, color-stop(0, #34D1D1), color-stop(1, #450E2F));
+
+	/* Webkit (Chrome 11+) */
+	background-image: -webkit-radial-gradient(center top, ellipse farthest-corner, #34D1D1 0%, #450E2F 100%);
+
+	/* W3C Markup, IE10 Release Preview */
+	background-image: radial-gradient(ellipse farthest-corner at center top, #34D1D1 0%, #450E2F 100%);
+
+}
+
+#popupDiv {
+	background-color:gray;
+	border:1px solid black;
+    width:300px;
+    height:300px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin:-150px 0 0 -150px; /* [-(height/2)px 0 0 -(width/2)px] */
+    display:none;
+	 z-index: 999;
+}
+
+table#board {
+	/*  http://www.somacon.com/p141.php/   */
+	border-width: 3px;
+	border-spacing: 0px;
+	border-style: double;
+	border-color: black;
+	border-collapse: collapse;
+	/*background-color: rgb(200, 200, 200);*/
+  	width: 100% !important;
+  	height: 100% !important;
+  	table-layout:fixed;
+
+}
+
+
+#container {
+	margin-left:auto;
+	margin-right:auto;
+	border-collapse:collapse;
+ 	display:table;
+
+}
+
+table#board {
+	/*  http://www.somacon.com/p141.php/   */
+	border-width: 3px;
+	border-spacing: 0px;
+	border-style: double;
+	border-color: black;
+	border-collapse: collapse;
+	/*background-color: rgb(200, 200, 200);*/
+  	width: 100% !important;
+  	height: 100% !important;
+  	table-layout:fixed;
+}
+
+td {
+	border-width: thin;
+	padding: 0px 0px 0px 0px;
+	margin:0px 0px 0px 0px;
+	border-style: dotted;
+	border-color: rgb(50, 50, 50);
+   opacity:0.2;
+	background-color: #FFF;
+}
+
+td.blue_selected {
+	background-color: #00F;
+	opacity:1;
+}
+
+td.red_selected {
+	background-color: #F00;
+	opacity:1;
+}
+
+td.red_past {
+	background-color: #FA255B;
+	opacity:.7;
+}
+
+td.blue_past {
+	background-color: #55F;
+	opacity:0.6;
+}
+
+td.controlTD {
+	width: 33%;
+	height: 33%;
+	text-align: center;
+	vertical-align: middle;
+	border: 0px;
+	/*font-family:sans-serif;*/
+	font-size:30pt;
+	color: black;
+	background-color: grey;
+	opacity:1;
+}
+
+#popupTable {
+	border:0px;
+	width:100%;
+	height:100%;
+	opacity:1;
+
+}
