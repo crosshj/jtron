@@ -1,33 +1,31 @@
 <html>
 	<head>
-		<title>ˑ</title>
-        <style>
-			pre { margin:0px auto; width:568px; overflow: hidden; line-height: 10px; font-size: 15px;}
-			.red { color: rgb(156, 0, 0); content: "▪";}
-			.blue { color: rgb(14, 167, 226); /*color: rgb(14, 14, 226);*/ content: "▪";}
-			.orange { color: #FF6600;}
-			.blank { color: #2C3539;  content: "▫";}
-			.bright.red { color: rgb(255, 0, 163); }
-			.bright.green { color: #70FF00; }
-			.bright.blue {  color: rgb(0, 173, 255); }
-			body { background: rgb(22, 22, 22); margin-top: 40px; cursor: default;}
-			body{
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-					zoom: 2;
-            }
-		</style>
+		<meta charset="utf-8"/>
+		<title>ascii snake</title>
+		<link rel="icon" href="../shared/favicon.svg">
 	</head>
-	<body onclick="mobileClick();">
 
-	</body>	
+	<style>
+		pre { margin:0px auto;  overflow: hidden; line-height: 10px; font-size: 15px;}
+		.red { color: rgb(156, 0, 0); content: "▪";}
+		.blue { color: rgb(14, 167, 226); /*color: rgb(14, 14, 226);*/ content: "▪";}
+		.orange { color: #FF6600;}
+		.blank { color: #2C3539;  content: "▫";}
+		.bright.red { color: rgb(255, 0, 163); }
+		.bright.green { color: #70FF00; }
+		.bright.blue {  color: rgb(0, 173, 255); }
+		body { background: rgb(22, 22, 22); margin-top: 40px; cursor: default;}
+		body{
+			-webkit-touch-callout: none;
+			user-select: none;
+			zoom: 2;
+			display: flex;
+			flex-direction: column;
+		}
+	</style>
 
+
+	<body onclick="mobileClick();"></body>
 
 	<script type="text/javascript" src="snake2.js"></script>
-
-
 </html>
