@@ -165,7 +165,7 @@ function Board(width, height, p1start, p2start)
 										travelChar = "┘";
 										break;
 								default:
-										travelChar = "▪";
+										travelChar = "■"; //"▪";
 										break;
 						}
 
