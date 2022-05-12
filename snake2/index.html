@@ -11,10 +11,17 @@
 			margin:0px auto;  overflow: hidden; line-height: 10px; font-size: 15px;
 			font-family: 'Source Code Pro', Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace;
 		}
+		pre span .blank,
+		pre span .red,
+		pre span .blue {
+			width: 11px !important;
+			height: 19px !important;
+		}
+		.blank { color: #2C3539;  content: "▫";}
 		.red { color: rgb(156, 0, 0); content: "▪";}
 		.blue { color: rgb(14, 167, 226); /*color: rgb(14, 14, 226);*/ content: "▪";}
+
 		.orange { color: #FF6600;}
-		.blank { color: #2C3539;  content: "▫";}
 		.bright.red { color: rgb(255, 0, 163); }
 		.bright.green { color: #70FF00; }
 		.bright.blue {  color: rgb(0, 173, 255); }
