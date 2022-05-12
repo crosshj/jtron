@@ -60,7 +60,7 @@ function drawSimpleBoard(board)
 				for (var i = 0; i < board.width; i++) 
 				{
 						var item = document.createElement("span");
-						item.appendChild(document.createTextNode(!board[i][j].travel ? "▪" : board[i][j].travel));  // ▫
+						item.appendChild(document.createTextNode(!board[i][j].travel ? "■" : board[i][j].travel));  // ▫
 						item.className = !board[i][j].owner ? "blank" : board[i][j].owner;
 						row.appendChild(item);
 						board[i][j].domElement = item; // store dom reference
