@@ -14,7 +14,7 @@ const overlayMult = cellDim * 6;
 
 const state = {
 	p1: {
-		color: "#F00",
+		color: "#B33",
 		history: [
 			[15,15],
 			[15,14],
@@ -38,7 +38,7 @@ const state = {
 		],
 	},
 	p2:{
-		color: "#00F",
+		color: "#39D",
 		history: [
 			[36,15],
 			[36,14],
@@ -104,6 +104,7 @@ const style = `
 .canvas-container #canvas1 {
 	position: relative;
 	display: flex;
+	background: #252420;
 }
 .canvas-container canvas {
 	position: absolute;
@@ -226,13 +227,13 @@ const drawLine = ({ ctx, from, to, color}) => {
 const renderBoard = (ctx) => {
 	for(var [y] of new Array(height+1).entries()){
 		const color = y % 5 === 0
-			? "#012"
+			? "#0017"
 			: "#0125";
 		drawLine({ ctx, from: [0,y*overlayMult], to: [width*overlayMult,y*overlayMult], color })
 	}
 	for(var [x] of new Array(width+1).entries()){
 		const color = x % 5 === 0
-			? "#012"
+			? "#0017"
 			: "#0125";
 		drawLine({ ctx, from: [x*overlayMult,0], to: [x*overlayMult,height*overlayMult], color })
 	}
