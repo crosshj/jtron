@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>container tests</title>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="color-scheme" content="dark light">
+		<link rel="icon" href="../shared/favicon.svg">
+		<script src="index.js" type="module"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<span style="font-family: Roboto Mono;"><!-- dumb preload --></span>
+		<snake-container name="tests" x="10" y="10" width="160" height="120">
+			<functions slot="functions">
+				<function name="One Step" event="oneStep" steps=1></function>
+				<function name="Multi-pass" event="multiPass" pass=10 steps=1></function>
+				<function name="Cyclic CA" event="cyclicCell" pass=3000 steps=1></function>
+				<function name="Dry Run" event="dryRun"></function>
+				<function name="Image Down Right" event="imageOverflowDR"></function>
+				<function name="Image Down Left" event="imageOverflowDL"></function>
+				<function name="Image Up Right" event="imageOverflowUR"></function>
+				<function name="Image Up Left" event="imageOverflowUL"></function>
+			</functions>
+		</snake-container>
+	</body>
+</html>
