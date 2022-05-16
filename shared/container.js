@@ -225,16 +225,17 @@ const drawLine = ({ ctx, from, to, color}) => {
 };
 
 const renderBoard = (ctx) => {
+	const defaultColor = '#000';
 	for(var [y] of new Array(height+1).entries()){
 		const color = y % 5 === 0
-			? "#0017"
-			: "#0125";
+			? defaultColor
+			: defaultColor + "5";
 		drawLine({ ctx, from: [0,y*overlayMult], to: [width*overlayMult,y*overlayMult], color })
 	}
 	for(var [x] of new Array(width+1).entries()){
 		const color = x % 5 === 0
-			? "#0017"
-			: "#0125";
+			? defaultColor
+			: defaultColor + "5";
 		drawLine({ ctx, from: [x*overlayMult,0], to: [x*overlayMult,height*overlayMult], color })
 	}
 };
@@ -605,7 +606,7 @@ class Container extends HTMLElement {
 				</button>
 			</div>
 			<div class="controls">
-				<div id="run">
+				<div id="run" class="hidden">
 					<button id="play">
 						<i class="fa fa-play"></i>
 					</button>
@@ -613,10 +614,10 @@ class Container extends HTMLElement {
 						<i class="fa fa-pause"></i>
 					</button>
 				</div>
-				<button id="refresh">
+				<button id="refresh" class="hidden">
 					<i class="fa fa-refresh"></i>
 				</button>
-				<select name="function" id="function-selector"></select>
+				<select name="function" id="function-selector" class="hidden"></select>
 				<button id="screen-expand">
 					<i class="fa fa-expand"></i>
 				</button>
