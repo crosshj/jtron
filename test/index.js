@@ -49,5 +49,5 @@ SnakeContainer.functions = {
 };
 
 SnakeContainer.onLoad(async () => {
-	//SnakeContainer.runButton.onclick()
+	SnakeContainer.runButton.onclick()
 });
