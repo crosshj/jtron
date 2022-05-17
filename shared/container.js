@@ -13,6 +13,7 @@ const cellDim = 3;
 const overlayMult = cellDim * 6;
 
 const state = {
+	width, height,
 	p1: {
 		color: "#B33",
 		history: [

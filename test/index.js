@@ -11,7 +11,7 @@ goals/todo:
 SnakeContainer.setNotes(notes.replace(/\t/g, '   '));
 
 const autoRun = async (args) => {
-	const { state: {p1, p2} } = args;
+	const { state: {p1, p2, width, height} } = args;
 	await delay(250);
 
 	const playerSpace = ([x,y]) => {
@@ -22,7 +22,8 @@ const autoRun = async (args) => {
 	const validMove = (player) => ([x,y]) => {
 		const taken = [...p1.history, ...p2.history]
 			.find(([hisX, hisY]) => x === hisX && y === hisY);
-		return !taken;
+		const inBounds = x >= 0 && y >= 0 && x < width && y < height;
+		return !taken && inBounds;
 	};
 
 	const randomMove = (player) => {
