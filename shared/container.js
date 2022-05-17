@@ -17,33 +17,12 @@ const state = {
 		color: "#B33",
 		history: [
 			[15,15],
-			[15,14],
-			[14,14],
-			[14,13],
-			[15,13],
-			[16,13],
-			[17,13],
-			[18,13],
-			[19,13],
-			[20,13],
-			[21,13],
-			[21,14],
-			[21,15],
-			[21,16],
-			[21,17],
-			[21,18],
-			[21,19],
-			[21,20],
-			[21,21],
 		],
 	},
 	p2:{
 		color: "#39D",
 		history: [
 			[36,15],
-			[36,14],
-			[36,13],
-			[36,12],
 		],
 	}
 }
@@ -225,6 +204,7 @@ const drawLine = ({ ctx, from, to, color}) => {
 };
 
 const renderBoard = (ctx) => {
+	ctx.clearRect(0,0,width*overlayMult, height*overlayMult);
 	const defaultColor = '#000';
 	for(var [y] of new Array(height+1).entries()){
 		const color = y % 5 === 0
@@ -233,7 +213,7 @@ const renderBoard = (ctx) => {
 		drawLine({ ctx, from: [0,y*overlayMult], to: [width*overlayMult,y*overlayMult], color })
 	}
 	for(var [x] of new Array(width+1).entries()){
-		const color = x % 5 === 0
+		const color = x % (5) === 1
 			? defaultColor
 			: defaultColor + "5";
 		drawLine({ ctx, from: [x*overlayMult,0], to: [x*overlayMult,height*overlayMult], color })
@@ -241,6 +221,7 @@ const renderBoard = (ctx) => {
 };
 
 const renderPlayers = (ctx) => {
+	ctx.clearRect(0,0,width, height);
 	const { p1, p2 } = state;
 	for(var player of [p1, p2]){
 		for(var [i, [x,y]] of player.history.entries()){
@@ -395,19 +376,6 @@ function imageOverflow({ x, y, xOffset=0, yOffset=0, width, height, id, canvas }
 		}
 	}
 
-
-	// if(topLeftCorner){
-	// 	console.log('correct topLeftCorner');
-	// }
-	// if(topRightCorner){
-	// 	console.log('correct topRightCorner');
-	// }
-	// if(bottomLeftCorner){
-	// 	console.log('correct bottomLeftCorner');
-	// }
-	// if(bottomRightCorner){
-	// 	console.log('correct bottomRightCorner');
-	// }
 }
 
 function readBlock(args){
@@ -470,14 +438,13 @@ async function ready(){
 
 	const done = ({ steps, passes }={}) => {
 		this.canvasReadOnly = cloneCanvas(this.canvas);
-		const hideOverlay = steps !== 1 && !passes;
-		hideOverlay && setTimeout(_ShowOverlayBlock, 1000);
+		//const hideOverlay = steps !== 1 && !passes;
+		//hideOverlay && setTimeout(_ShowOverlayBlock, 1000);
 		runButton.classList.remove('hidden');
 		pauseButton.classList.add('hidden');
 	};
 
 	const run = async ({ x,y,fn,steps, step, passes, pass }) => {
-		steps !== 1 && _ShowOverlayBlock(x,y);
 		const { id } = readBlock.bind(this)({
 			x, y, width: 10, height: 10
 		});
@@ -488,12 +455,11 @@ async function ready(){
 			width: 10 + (offset.width || 0),
 			height: 10 + (offset.height || 0),
 		});
-		const newImgData = await fn({
-			x, y, id, readImage, steps, step, passes, pass
+		await fn({
+			steps, step, passes, pass, state
 		});
-		newImgData && await writeBlock.bind(this)({
-			x, y, width: 10, height: 10, imageData: newImgData
-		});
+		renderPlayers(this.canvasCtx);
+		renderBoard(this.overlayCtx);
 	};
 
 	runButton.onclick = async () => {
@@ -606,7 +572,7 @@ class Container extends HTMLElement {
 				</button>
 			</div>
 			<div class="controls">
-				<div id="run" class="hidden">
+				<div id="run">
 					<button id="play">
 						<i class="fa fa-play"></i>
 					</button>
@@ -617,7 +583,7 @@ class Container extends HTMLElement {
 				<button id="refresh" class="hidden">
 					<i class="fa fa-refresh"></i>
 				</button>
-				<select name="function" id="function-selector" class="hidden"></select>
+				<select name="function" id="function-selector"></select>
 				<button id="screen-expand">
 					<i class="fa fa-expand"></i>
 				</button>
@@ -660,9 +626,8 @@ class Container extends HTMLElement {
 		};
 		this.ready = ready.bind(this)();
 	}
-	connectedCallback() {
+	connectedCallback() {}
 
-	}
 	disconnectedCallback() {
 		this.loaded = false;
 	}
