@@ -12,7 +12,7 @@ SnakeContainer.setNotes(notes.replace(/\t/g, '   '));
 
 const autoRun = async (args) => {
 	const { state: {p1, p2} } = args;
-	await delay(500);
+	await delay(250);
 
 	const playerSpace = ([x,y]) => {
 		const [currentX, currentY] = player.history[player.history.length-1];
