@@ -1,4 +1,5 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const clone = (o) => JSON.parse(JSON.stringify(o));
 
 var outerStyleSheet = document.createElement('style');
 outerStyleSheet.id = 'neural-container-style';
@@ -12,7 +13,7 @@ const height = 31;
 const cellDim = 3;
 const overlayMult = cellDim * 6;
 
-const state = {
+const defaultState = {
 	width, height,
 	p1: {
 		color: "#B33",
@@ -26,7 +27,8 @@ const state = {
 			[36,15],
 		],
 	}
-}
+};
+let state = clone(defaultState);
 
 const style = `
 :host {
@@ -180,16 +182,19 @@ select:focus, select:active {
 	margin: auto;
 	height: 100%;
 }
-.rotated-fs #screen-compress {
+.rotated-fs #screen-compress,
+.rotated-fs #fs-refresh {
 	position: absolute;
 	right: 0.75em;
-	top: 0.75em;
 	width: auto;
 	background: transparent;
 	border: 0;
 	font-size: 1.5em;
 	opacity: .5;
 }
+.rotated-fs #screen-compress { top: 0.75em; }
+.rotated-fs #fs-refresh { top: 3.25em; }
+
 .rotated-fs #canvas-overlay{
 	margin: auto;
 }
@@ -409,7 +414,7 @@ function writeBlock({x, y, width, height, imageData }){
 
 async function ready(){
 	const {
-		refreshButton, runButton, pauseButton,
+		refreshButton, fsRefreshButton, runButton, pauseButton,
 		functionSelector, inputFunctions, changeFunction,
 		loadedHandlers, loadedCallback
 	} = this;
@@ -430,12 +435,20 @@ async function ready(){
 	functionSelector.value = sessionStorage.getItem(this.appName + '-neural-net-fn') || fnOptions[0]?.value;
 	functionSelector.onchange = () => changeFunction(functionSelector.value);
 
-	refreshButton.onclick = () => {
-		_ShowOverlayBlock();
+	const refreshAction = () => {
+		//_ShowOverlayBlock();
+		state = clone(defaultState);
+		renderPlayers(this.canvasCtx);
+		renderBoard(this.overlayCtx);
 		runButton.classList.remove('hidden');
 		pauseButton.classList.add('hidden');
 		this.paused = 'canceled';
-	}
+	};
+	refreshButton.onclick = refreshAction;
+	fsRefreshButton.onclick = () => {
+		refreshAction();
+		runButton.click();
+	};
 
 	const done = ({ steps, passes }={}) => {
 		this.canvasReadOnly = cloneCanvas(this.canvas);
@@ -520,6 +533,7 @@ async function ready(){
 	this.expandButton.onclick = async () => {
 		this.compressButton.classList.remove('hidden');
 		this.expandButton.classList.add('hidden');
+		this.fsRefreshButton.classList.remove('hidden');
 		this.canvasContainer.classList.add('rotated-fs');
 		this.canvasOverlay.style.width = this.canvas.clientWidth + 'px';
 		document.body.requestFullscreen(/*{ navigationUI: "show" }*/)
@@ -530,6 +544,7 @@ async function ready(){
 	};
 	this.compressButton.onclick = async () => {
 		this.expandButton.classList.remove('hidden');
+		this.fsRefreshButton.classList.add('hidden');
 		this.compressButton.classList.add('hidden');
 		this.canvasContainer.classList.remove('rotated-fs');
 		this.canvasOverlay.style.width = '';
@@ -541,7 +556,7 @@ async function ready(){
 	};
 	await changeFunction(functionSelector.value);
 	await loadedCallback.bind(this)();
-	
+
 	renderPlayers(this.canvasCtx);
 	renderBoard(this.overlayCtx);
 }
@@ -571,6 +586,9 @@ class Container extends HTMLElement {
 				<button id="screen-compress" class="hidden">
 					<i class="fa fa-compress"></i>
 				</button>
+				<button id="fs-refresh" class="hidden">
+					<i class="fa fa-refresh"></i>
+				</button>
 			</div>
 			<div class="controls">
 				<div id="run">
@@ -581,7 +599,7 @@ class Container extends HTMLElement {
 						<i class="fa fa-pause"></i>
 					</button>
 				</div>
-				<button id="refresh" class="hidden">
+				<button id="refresh">
 					<i class="fa fa-refresh"></i>
 				</button>
 				<select name="function" id="function-selector"></select>
@@ -608,6 +626,7 @@ class Container extends HTMLElement {
 		this.runButton = this.shadowRoot.querySelector('#play');
 		this.pauseButton = this.shadowRoot.querySelector('#pause');
 		this.refreshButton = this.shadowRoot.querySelector('#refresh');
+		this.fsRefreshButton = this.shadowRoot.querySelector('#fs-refresh');
 		this.expandButton = this.shadowRoot.querySelector('#screen-expand');
 		this.compressButton = this.shadowRoot.querySelector('#screen-compress');
 
