@@ -1,8 +1,28 @@
-import {delay, randomArrayItem} from "../../shared/utils.js";
+import {delay, clone, randomArrayItem} from "../../shared/utils.js";
+import flood from '../../shared/flood.js';
+
+const testFlood = async ({ state, allMoves }) => {
+	const { p1, p2, width, height } = state;
+	const board = {
+		width,height,
+		pixels: new Array(width * height).fill(false)
+	};
+	for(var [x,y] of [...p1.history, ...p2.history]){
+		board.pixels[y*width+x] = true;
+	}
+	let moves = [];
+	for(var pixel of allMoves){
+		const filled = await flood({ board: clone(board), pixel });
+		moves.push({ pixel, length: filled.length });
+	}
+	const max = Math.max(...moves.map(x => x.length)) || 0;
+	if(!max) return;
+	return moves.filter(x => x.length >= max).map(x => x.pixel);
+};
 
 const autoRun = async (args) => {
-	const { state: {p1, p2, width, height} } = args;
-	await delay(250);
+	const { state: {p1, p2, width, height}, state } = args;
+	await delay(50);
 
 	const playerSpace = ([x,y]) => {
 		const [currentX, currentY] = player.history[player.history.length-1];
@@ -16,7 +36,7 @@ const autoRun = async (args) => {
 		return !taken && inBounds;
 	};
 
-	const randomMove = (player) => {
+	const randomMove = async (player) => {
 		const allMoves = [
 			[-1,0],
 			[1,0],
@@ -25,14 +45,27 @@ const autoRun = async (args) => {
 		]
 			.map(playerSpace)
 			.filter(validMove(player));
-		const move = randomArrayItem(allMoves);
+		if(!allMoves?.length) return;
+		if(allMoves.length === 1) return allMoves[0];
+
+		const floodMoves = await testFlood({ state, allMoves });
+		if(!floodMoves?.length) return;
+		if(floodMoves.length === 1) return floodMoves[0];
+
+		const move = randomArrayItem(floodMoves);
 		return move;
 	};
+	
+	let GameOver = false;
 	for(var [name,player] of Object.entries({p1,p2})){
-		const move = randomMove(player);
-		if(!move) continue;
+		const move = await randomMove(player);
+		if(!move){
+			GameOver = true;
+			break;
+		}
 		player.history.push(move);
 	}
+	return GameOver;
 };
 
 export default autoRun;

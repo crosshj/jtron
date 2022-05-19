@@ -28,11 +28,16 @@ const autoRun = async (args) => {
 		const move = randomArrayItem(allMoves);
 		return move;
 	};
+	let GameOver = false;
 	for(var [name,player] of Object.entries({p1,p2})){
 		const move = randomMove(player);
-		if(!move) continue;
+		if(!move){
+			GameOver = true;
+			break;
+		}
 		player.history.push(move);
 	}
+	return GameOver;
 };
 
 export default autoRun;

@@ -469,11 +469,12 @@ async function ready(){
 			width: 10 + (offset.width || 0),
 			height: 10 + (offset.height || 0),
 		});
-		await fn({
+		const result = await fn({
 			steps, step, passes, pass, state
 		});
 		renderPlayers(this.canvasCtx);
 		renderBoard(this.overlayCtx);
+		return result;
 	};
 
 	runButton.onclick = async () => {
@@ -505,6 +506,7 @@ async function ready(){
 			return;
 		}
 		let step=0;
+		let gameOver=false;
 		for(var [pass] of new Array(passes||1).entries()){
 			for(var [x] of new Array(16).entries()){
 				for(var [y] of new Array(12).entries()){
@@ -512,12 +514,15 @@ async function ready(){
 						const status = await this.paused;
 						if(status === 'canceled') break;
 					}
-					await run({ x, y, fn, steps, step, pass, passes });
+					gameOver = await run({ x, y, fn, steps, step, pass, passes });
 					step+=1;
 					if(steps && step >= steps) break;
+					if(gameOver) break;
 				}
 				if(steps && step >= steps) break;
+				if(gameOver) break;
 			}
+			if(gameOver) break;
 			step=0;
 		}
 		done({ passes });
