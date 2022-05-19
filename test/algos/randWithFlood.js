@@ -22,7 +22,6 @@ const testFlood = async ({ state, allMoves }) => {
 
 const autoRun = async (args) => {
 	const { state: {p1, p2, width, height}, state } = args;
-	await delay(50);
 
 	const playerSpace = ([x,y]) => {
 		const [currentX, currentY] = player.history[player.history.length-1];

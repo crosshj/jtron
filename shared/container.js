@@ -240,6 +240,14 @@ const renderPlayers = (ctx) => {
 	}
 };
 
+const render = (ctx, overlayCtx) => new Promise((resolve) => {
+	requestAnimationFrame(() => {
+		renderBoard(overlayCtx);
+		renderPlayers(ctx);
+		resolve();
+	});
+})
+
 async function CanvasText(text){
 	let ready = await document.fonts.ready;
 	// console.log('Fonts Ready: ' + JSON.stringify(ready))
@@ -435,18 +443,17 @@ async function ready(){
 	functionSelector.value = sessionStorage.getItem(this.appName + '-neural-net-fn') || fnOptions[0]?.value;
 	functionSelector.onchange = () => changeFunction(functionSelector.value);
 
-	const refreshAction = () => {
+	const refreshAction = async () => {
 		//_ShowOverlayBlock();
 		state = clone(defaultState);
-		renderPlayers(this.canvasCtx);
-		renderBoard(this.overlayCtx);
+		await render(this.canvasCtx, this.overlayCtx);
 		runButton.classList.remove('hidden');
 		pauseButton.classList.add('hidden');
 		this.paused = 'canceled';
 	};
 	refreshButton.onclick = refreshAction;
-	fsRefreshButton.onclick = () => {
-		refreshAction();
+	fsRefreshButton.onclick = async () => {
+		await refreshAction();
 		runButton.click();
 	};
 
@@ -472,8 +479,7 @@ async function ready(){
 		const result = await fn({
 			steps, step, passes, pass, state
 		});
-		renderPlayers(this.canvasCtx);
-		renderBoard(this.overlayCtx);
+		await render(this.canvasCtx, this.overlayCtx);
 		return result;
 	};
 
@@ -562,8 +568,7 @@ async function ready(){
 	await changeFunction(functionSelector.value);
 	await loadedCallback.bind(this)();
 
-	renderPlayers(this.canvasCtx);
-	renderBoard(this.overlayCtx);
+	await render(this.canvasCtx, this.overlayCtx);
 }
 
 
