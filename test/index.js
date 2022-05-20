@@ -1,6 +1,7 @@
 import '../shared/container.js';
 import basic from './algos/basic.js';
 import randWithFlood from './algos/randWithFlood.js';
+import randFloodDist from './algos/randFloodDist.js';
 
 const SnakeContainer = document.querySelector('snake-container');
 const { CanvasText } = SnakeContainer;
@@ -28,7 +29,7 @@ ideas:
 SnakeContainer.setNotes(notes.replace(/\t/g, '   '));
 
 SnakeContainer.functions = {
-	basic, randWithFlood
+	basic, randWithFlood, randFloodDist
 };
 
 SnakeContainer.onLoad(async () => {
