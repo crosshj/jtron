@@ -25,6 +25,9 @@ ideas:
 	- https://careerfoundry.com/en/blog/data-analytics/monte-carlo-method/
 	- apply algos from other folders in this repo
 	- previously, I had game play repeatedly with winner doing same moves as last win
+
+todo:
+	- ability to pit two algorithms against easch other
 `;
 SnakeContainer.setNotes(notes.replace(/\t/g, '   '));
 
