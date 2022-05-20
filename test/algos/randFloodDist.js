@@ -1,6 +1,7 @@
 import {delay, clone, randomArrayItem} from "../../shared/utils.js";
 import flood from '../../shared/flood.js';
 
+// rationality
 const testFlood = async ({ state, allMoves }) => {
 	const { p1, p2, width, height } = state;
 	const board = {
@@ -20,7 +21,8 @@ const testFlood = async ({ state, allMoves }) => {
 	return moves.filter(x => x.length >= max).map(x => x.pixel);
 };
 
-const distanceMoves = async ({ state, moves }) => {
+// cowardice, fear
+const distanceMoves = async ({ state, moves, aggressive }) => {
 	const { p1, p2 } = state;
 	const distance = ([x1,y1],[x2,y2]) => Math.sqrt(
 		Math.pow(x2 - x1, 2) +
@@ -37,26 +39,24 @@ const distanceMoves = async ({ state, moves }) => {
 	const max = Math.max(...distMoves.map(x => x.distance)) || 0;
 	const min = Math.min(...distMoves.map(x => x.distance)) || 0;
 	if(!max) return;
-	if(max-min < 1) return moves;
+	if(aggressive) return distMoves.filter(x => x.distance <= min).map(x => x.pixel);
 	return distMoves.filter(x => x.distance >= max).map(x => x.pixel)
 };
 
-const autoRun = async (args) => {
-	const { state: {p1, p2, width, height}, state } = args;
+const randFloodDist = async (player, state, aggressive) => {
+	const {p1, p2, width, height} = state;
+	const [currentX, currentY] = player.history[player.history.length-1];
 
-	const playerSpace = ([x,y]) => {
-		const [currentX, currentY] = player.history[player.history.length-1];
-		return [currentX+x, currentY+y];
-	};
+	const playerSpace = ([x,y]) => ([currentX+x, currentY+y]);
 
-	const validMove = (player) => ([x,y]) => {
+	const validMove = ([x,y]) => {
 		const taken = [...p1.history, ...p2.history]
 			.find(([hisX, hisY]) => x === hisX && y === hisY);
 		const inBounds = x >= 0 && y >= 0 && x < width && y < height;
 		return !taken && inBounds;
 	};
 
-	const randomMove = async (player, name) => {
+	const randomMove = async () => {
 		const allMoves = [
 			[-1,0],
 			[1,0],
@@ -64,7 +64,7 @@ const autoRun = async (args) => {
 			[0,1],
 		]
 			.map(playerSpace)
-			.filter(validMove(player));
+			.filter(validMove);
 		if(!allMoves?.length) return;
 		if(allMoves.length === 1) return allMoves[0];
 
@@ -73,26 +73,15 @@ const autoRun = async (args) => {
 		if(floodMoves.length === 1) return floodMoves[0];
 
 		let distMoves = floodMoves;
-		if(name === "p1"){
-			distMoves = await distanceMoves({ state, moves: floodMoves });
-			if(!distMoves?.length) return;
-			if(distMoves.length === 1) return distMoves[0];
-		}
+		distMoves = await distanceMoves({ state, moves: floodMoves, aggressive });
+		if(!distMoves?.length) return;
+		if(distMoves.length === 1) return distMoves[0];
 
 		const move = randomArrayItem(distMoves);
 		return move;
 	};
-	
-	let GameOver = false;
-	for(var [name,player] of Object.entries({p1,p2})){
-		const move = await randomMove(player, name);
-		if(!move){
-			GameOver = true;
-			break;
-		}
-		player.history.push(move);
-	}
-	return GameOver;
+
+	return await randomMove();
 };
 
-export default autoRun;
+export default randFloodDist;

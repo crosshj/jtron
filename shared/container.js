@@ -440,7 +440,7 @@ async function ready(){
 		.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) )
 		.map(SelectOption)
 		.join('\n');
-	functionSelector.value = sessionStorage.getItem(this.appName + '-neural-net-fn') || fnOptions[0]?.value;
+	functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || fnOptions[0]?.value;
 	functionSelector.onchange = () => changeFunction(functionSelector.value);
 
 	const refreshAction = async () => {
@@ -651,7 +651,7 @@ class Container extends HTMLElement {
 
 		this.appName = this.getAttribute('name');
 		this.changeFunction = async (which) => {
-			sessionStorage.setItem(this.appName+'-neural-net-fn', which);
+			sessionStorage.setItem(this.appName+'-snake-fn', which);
 			this.currentFunction = which;
 		};
 		this.ready = ready.bind(this)();

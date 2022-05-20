@@ -20,15 +20,13 @@ const testFlood = async ({ state, allMoves }) => {
 	return moves.filter(x => x.length >= max).map(x => x.pixel);
 };
 
-const autoRun = async (args) => {
-	const { state: {p1, p2, width, height}, state } = args;
+const randWithFlood = async (player, state) => {
+	const {p1, p2, width, height} = state;
+	const [currentX, currentY] = player.history[player.history.length-1];
 
-	const playerSpace = ([x,y]) => {
-		const [currentX, currentY] = player.history[player.history.length-1];
-		return [currentX+x, currentY+y];
-	};
+	const playerSpace = ([x,y]) => ([currentX+x, currentY+y]);
 
-	const validMove = (player) => ([x,y]) => {
+	const validMove = ([x,y]) => {
 		const taken = [...p1.history, ...p2.history]
 			.find(([hisX, hisY]) => x === hisX && y === hisY);
 		const inBounds = x >= 0 && y >= 0 && x < width && y < height;
@@ -43,7 +41,7 @@ const autoRun = async (args) => {
 			[0,1],
 		]
 			.map(playerSpace)
-			.filter(validMove(player));
+			.filter(validMove);
 		if(!allMoves?.length) return;
 		if(allMoves.length === 1) return allMoves[0];
 
@@ -54,17 +52,8 @@ const autoRun = async (args) => {
 		const move = randomArrayItem(floodMoves);
 		return move;
 	};
-	
-	let GameOver = false;
-	for(var [name,player] of Object.entries({p1,p2})){
-		const move = await randomMove(player);
-		if(!move){
-			GameOver = true;
-			break;
-		}
-		player.history.push(move);
-	}
-	return GameOver;
+
+	return randomMove(player);
 };
 
-export default autoRun;
+export default randWithFlood;
