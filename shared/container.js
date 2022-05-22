@@ -16,12 +16,14 @@ const overlayMult = cellDim * 6;
 const defaultState = {
 	width, height,
 	p1: {
+		name: "p1",
 		color: "#B33",
 		history: [
 			[15,15],
 		],
 	},
 	p2:{
+		name: "p2",
 		color: "#39D",
 		history: [
 			[36,15],

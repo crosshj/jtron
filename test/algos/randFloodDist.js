@@ -2,17 +2,17 @@ import {delay, clone, randomArrayItem} from "../../shared/utils.js";
 import flood from '../../shared/flood.js';
 
 // rationality
-const testFlood = async ({ state, allMoves }) => {
+const testFlood = async ({ state, playerMoves, avoid=[] }) => {
 	const { p1, p2, width, height } = state;
 	const board = {
 		width,height,
 		pixels: new Array(width * height).fill(false)
 	};
-	for(var [x,y] of [...p1.history, ...p2.history]){
+	for(var [x,y] of [...p1.history, ...p2.history, ...avoid]){
 		board.pixels[y*width+x] = true;
 	}
 	let moves = [];
-	for(var pixel of allMoves){
+	for(var pixel of playerMoves){
 		const filled = await flood({ board: clone(board), pixel });
 		moves.push({ pixel, length: filled.length });
 	}
@@ -43,10 +43,10 @@ const distanceMoves = async ({ state, moves, aggressive }) => {
 	return distMoves.filter(x => x.distance >= max).map(x => x.pixel)
 };
 
-const randFloodDist = async (player, state, aggressive) => {
+const getMoves = ({ player, state }) => {
 	const {p1, p2, width, height} = state;
-	const [currentX, currentY] = player.history[player.history.length-1];
 
+	const [currentX, currentY] = player.history[player.history.length-1];
 	const playerSpace = ([x,y]) => ([currentX+x, currentY+y]);
 
 	const validMove = ([x,y]) => {
@@ -55,33 +55,39 @@ const randFloodDist = async (player, state, aggressive) => {
 		const inBounds = x >= 0 && y >= 0 && x < width && y < height;
 		return !taken && inBounds;
 	};
-
-	const randomMove = async () => {
-		const allMoves = [
+	
+	const playerMoves = [
 			[-1,0],
 			[1,0],
 			[0,-1],
 			[0,1],
 		]
-			.map(playerSpace)
-			.filter(validMove);
-		if(!allMoves?.length) return;
-		if(allMoves.length === 1) return allMoves[0];
+		.map(playerSpace)
+		.filter(validMove)
+	return playerMoves;
+};
 
-		const floodMoves = await testFlood({ state, allMoves });
-		if(!floodMoves?.length) return;
-		if(floodMoves.length === 1) return floodMoves[0];
 
-		let distMoves = floodMoves;
-		distMoves = await distanceMoves({ state, moves: floodMoves, aggressive });
-		if(!distMoves?.length) return;
-		if(distMoves.length === 1) return distMoves[0];
+const randFloodDist = async (player, state, aggressive) => {
+	const { p1, p2 } = state;
+	const playerMoves = getMoves({ player, state });
+	if(!playerMoves?.length) return;
+	if(playerMoves.length === 1) return playerMoves[0];
 
-		const move = randomArrayItem(distMoves);
-		return move;
-	};
+	const opponent = player.name === 'p1' ? p2 : p1;
+	const opponentMoves = getMoves({ player: opponent, state });
 
-	return await randomMove();
+	const floodMoves = await testFlood({ state, playerMoves, avoid: opponentMoves });
+	if(!floodMoves?.length) return;
+	if(floodMoves.length === 1) return floodMoves[0];
+
+	let distMoves = floodMoves;
+	distMoves = await distanceMoves({ state, moves: floodMoves, aggressive });
+	if(!distMoves?.length) return;
+	if(distMoves.length === 1) return distMoves[0];
+
+	const move = randomArrayItem(distMoves);
+	return move;
 };
 
 export default randFloodDist;

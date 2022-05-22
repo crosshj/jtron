@@ -76,7 +76,7 @@ SnakeContainer.functions = {
 		p2: passive
 	}),
 	passiveAggressive: game({
-		p1: randWithFlood,
+		p1: passive,
 		p2: aggressive
 	}),
 	aggressiveAggressive: game({
