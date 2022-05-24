@@ -1,6 +1,6 @@
 import {delay, randomArrayItem} from "../../shared/utils.js";
 
-const autoRun = async (args) => {
+const algo = async (args) => {
 	const { state: {p1, p2, width, height} } = args;
 	await delay(250);
 
@@ -40,4 +40,4 @@ const autoRun = async (args) => {
 	return GameOver;
 };
 
-export default autoRun;
+export default algo;

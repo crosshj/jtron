@@ -23,7 +23,6 @@ const testFlood = async ({ state, allMoves }) => {
 const randWithFlood = async (player, state) => {
 	const {p1, p2, width, height} = state;
 	const [currentX, currentY] = player.history[player.history.length-1];
-
 	const playerSpace = ([x,y]) => ([currentX+x, currentY+y]);
 
 	const validMove = ([x,y]) => {

@@ -1,7 +1,9 @@
+import { clone } from '../shared/utils.js';
 import '../shared/container.js';
 import basic from './algos/basic.js';
 import randWithFlood from './algos/randWithFlood.js';
 import randFloodDist from './algos/randFloodDist.js';
+import a1k0n2 from './algos/a1k0n2.js';
 
 const SnakeContainer = document.querySelector('snake-container');
 const { CanvasText } = SnakeContainer;
@@ -37,15 +39,17 @@ SnakeContainer.setNotes(notes.replace(/\t/g, '   '));
 
 const game = (algos) => async (args) => {
 	const {
-		state: {p1, p2, width, height},
+		state: {width, height},
 		state,
 		aggressive
 	} = args;
 
 	let GameOver = false;
 	const todos = [];
+	const clonedState = clone(state);
+	const {p1,p2} = clonedState;
 	for(var [name,player] of Object.entries({ p1,p2 })){
-		const move = await algos[name](player, state);
+		const move = await algos[name](player, clonedState);
 		if(!move){
 			GameOver = true;
 			break;
@@ -87,8 +91,16 @@ SnakeContainer.functions = {
 		p1: aggressive,
 		p2: randWithFlood
 	}),
+	aggressiveA1k0n2: game({
+		p1: aggressive,
+		p2: a1k0n2
+	}),
+	a1k0n2Aggressive: game({
+		p1: a1k0n2,
+		p2: aggressive,
+	})
 };
 
 SnakeContainer.onLoad(async () => {
-	SnakeContainer.runButton.onclick()
+	//SnakeContainer.runButton.onclick()
 });

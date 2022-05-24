@@ -116,8 +116,7 @@ function init()
 
   var p1score=0,p2score=0;
   var p1dist, p2dist;
-  function evaluate_pos(myi,theiri)
-  {
+  function evaluate_pos(myi,theiri){
     // evaluate position
     p1dist = floodfill([], myi);
     p2dist = floodfill([], theiri);
@@ -142,8 +141,7 @@ function init()
   }
 
   // negamax -- minimax with alpha-beta pruning, simple implementation (see wikipedia)
-  function negamax(myi,theiri,depth,a,b)
-  {
+  function negamax(myi,theiri,depth,a,b){
     if(depth == 0) {
       return evaluate_pos(myi,theiri);
     }
