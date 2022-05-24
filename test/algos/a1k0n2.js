@@ -75,7 +75,7 @@ function negamax(myi,theiri,depth,a,b){
 	if(depth == 0) {
 		return evaluate_pos.bind(this)(myi,theiri);
 	}
-	var bestmove=0;
+	var bestmove;
 	var bestaltmove=0;
 	for(var move=0;move<4;move++) {
 		var idx = myi + this.di[move];
@@ -211,6 +211,7 @@ const algo = async (player, state, aggressive) => {
 		? frame({ map, p1, p2 })
 		: frame({ map, p1: p2, p2: p1 });
 
+	if(!context.p2) return;
 	return playerSpace(context.p2);
 };
 

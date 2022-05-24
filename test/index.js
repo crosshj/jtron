@@ -98,6 +98,10 @@ SnakeContainer.functions = {
 	a1k0n2Aggressive: game({
 		p1: a1k0n2,
 		p2: aggressive,
+	}),
+	a1k0n2A1k0n2: game({
+		p1: a1k0n2,
+		p2: a1k0n2,
 	})
 };
 
