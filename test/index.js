@@ -99,10 +99,18 @@ SnakeContainer.functions = {
 		p1: a1k0n2,
 		p2: aggressive,
 	}),
+	a1k0n2Passive: game({
+		p1: a1k0n2,
+		p2: passive,
+	}),
 	a1k0n2A1k0n2: game({
 		p1: a1k0n2,
 		p2: a1k0n2,
-	})
+	}),
+	passiveA1k0n2: game({
+		p1: passive,
+		p2: a1k0n2,
+	}),
 };
 
 SnakeContainer.onLoad(async () => {
