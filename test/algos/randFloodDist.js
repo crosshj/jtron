@@ -21,7 +21,13 @@ const testFlood = async ({ state, playerMoves, avoid=[] }) => {
 	return moves.filter(x => x.length >= max).map(x => x.pixel);
 };
 
-// cowardice, fear
+// TODO: astar for distance (versus geometric distance)
+// https://github.com/bgrins/javascript-astar/blob/master/astar.js
+// https://stackoverflow.com/questions/23705233/how-to-speed-up-a-algorithm-at-large-spatial-scales/23779490#23779490
+// see also: Dijkstra's algorithm (for weighted edges), or Breadth-First Search (for unweighted edges, faster than Dijkstra)
+
+
+// cowardice, fear OR aggressiveness
 const distanceMoves = async ({ state, moves, aggressive }) => {
 	const { p1, p2 } = state;
 	const distance = ([x1,y1],[x2,y2]) => Math.sqrt(
