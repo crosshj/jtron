@@ -4,6 +4,7 @@ import basic from './algos/basic.js';
 import randWithFlood from './algos/randWithFlood.js';
 import randFloodDist from './algos/randFloodDist.js';
 import a1k0n2 from './algos/a1k0n2.js';
+import withAstar from './algos/withAstar.js';
 
 const SnakeContainer = document.querySelector('snake-container');
 const { CanvasText } = SnakeContainer;
@@ -65,6 +66,9 @@ const game = (algos) => async (args) => {
 const passive = randFloodDist;
 const aggressive = (...args) => randFloodDist(...args, true/*aggressive*/ );
 
+const astarPassive = withAstar;
+const astarAggressive = (...args) => withAstar(...args, true/*aggressive*/ );
+
 SnakeContainer.functions = {
 	basic,
 	randWithFlood: game({
@@ -110,6 +114,18 @@ SnakeContainer.functions = {
 	passiveA1k0n2: game({
 		p1: passive,
 		p2: a1k0n2,
+	}),
+	asAggressiveA1k0n2: game({
+		p1: astarAggressive,
+		p2: a1k0n2,
+	}),
+	A1k0n2AsAggressive: game({
+		p1: a1k0n2,
+		p2: astarAggressive,
+	}),
+	asAggressiveAsAggressive: game({
+		p1: astarAggressive,
+		p2: astarAggressive,
 	}),
 };
 
