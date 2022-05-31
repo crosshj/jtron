@@ -99,7 +99,7 @@ const style = `
 	right:0;
 	bottom: 0;
 }
-
+.flex-end { display: flex; justify-content: flex-end; }
 
 select {
 	background-color: transparent;
@@ -130,9 +130,6 @@ select:focus, select:active {
 		inset 0px 0px 15px 0 #0003,
 		inset 0 0 1px #000d;
 }
-.controls > * + * {
-	margin-left: 0.5em;
-}
 .controls select,
 .controls button {
 	font-size: inherit;
@@ -150,17 +147,16 @@ select:focus, select:active {
 	color: white;
 	box-shadow: 0 1px 0 0 black;
 }
-.controls #run {
-	margin-right: auto;
+.controls > div {
+	min-width: 70px;
 }
 #function-selector {
-	background: #bb3333;
-	color: #3c1212;
+	background: #662928;
 }
 #function-selector-opponent {
-	background: #3399dd;
-	color: #113147;
+	background: #265673;
 }
+#selectors { margin: auto; }
 
 ::slotted(pre), pre {
 	white-space: pre-wrap;
@@ -654,22 +650,26 @@ class Container extends HTMLElement {
 				</button>
 			</div>
 			<div class="controls">
-				<div id="run">
+				<div>
 					<button id="play">
 						<i class="fa fa-play"></i>
 					</button>
 					<button id="pause" class="hidden">
 						<i class="fa fa-pause"></i>
 					</button>
+					<button id="refresh">
+						<i class="fa fa-refresh"></i>
+					</button>
 				</div>
-				<button id="refresh">
-					<i class="fa fa-refresh"></i>
-				</button>
-				<select name="function" id="function-selector"></select>
-				<select id="function-selector-opponent"></select>
-				<button id="screen-expand">
-					<i class="fa fa-expand"></i>
-				</button>
+				<div id="selectors">
+					<select name="function" id="function-selector"></select>
+					<select id="function-selector-opponent"></select>
+				</div>
+				<div class="flex-end">
+					<button id="screen-expand">
+						<i class="fa fa-expand"></i>
+					</button>
+				</div>
 			</div>
 			<div class="extend"></div>
 			<slot name="notes"></slot>
