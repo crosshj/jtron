@@ -153,6 +153,14 @@ select:focus, select:active {
 .controls #run {
 	margin-right: auto;
 }
+#function-selector {
+	background: #bb3333;
+	color: #3c1212;
+}
+#function-selector-opponent {
+	background: #3399dd;
+	color: #113147;
+}
 
 ::slotted(pre), pre {
 	white-space: pre-wrap;
@@ -425,7 +433,7 @@ function writeBlock({x, y, width, height, imageData }){
 async function ready(){
 	const {
 		refreshButton, fsRefreshButton, runButton, pauseButton,
-		functionSelector, inputFunctions, changeFunction,
+		functionSelector, functionSelectorOpponent, inputFunctions, changeFunction, changeFunctionOpponent,
 		loadedHandlers, loadedCallback
 	} = this;
 	const _ShowOverlayBlock = ShowOverlayBlock.bind(this);
@@ -438,12 +446,18 @@ async function ready(){
 			pass: x.getAttribute('pass') ? Number(x.getAttribute('pass')) : ''
 		}
 	});
-	functionSelector.innerHTML = fnOptions
-		.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) )
-		.map(SelectOption)
-		.join('\n');
+	[functionSelector, functionSelectorOpponent].forEach(x => {
+		x.innerHTML = fnOptions
+			.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) )
+			.map(SelectOption)
+			.join('\n');
+	});
+
 	functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || fnOptions[0]?.value;
+	functionSelectorOpponent.value = sessionStorage.getItem(this.appName + '-snake-fn-opponent') || fnOptions[0]?.value;
+
 	functionSelector.onchange = () => changeFunction(functionSelector.value);
+	functionSelectorOpponent.onchange = () => changeFunctionOpponent(functionSelectorOpponent.value);
 
 	const refreshAction = async () => {
 		//_ShowOverlayBlock();
@@ -467,7 +481,32 @@ async function ready(){
 		pauseButton.classList.add('hidden');
 	};
 
-	const run = async ({ x,y,fn,steps, step, passes, pass }) => {
+	const game = (algos) => async (args) => {
+		const {
+			state: {width, height},
+			state,
+			aggressive
+		} = args;
+
+		let GameOver = false;
+		const todos = [];
+		const clonedState = clone(state);
+		const {p1,p2} = clonedState;
+		for(var [name,player] of Object.entries({ p1,p2 })){
+			const move = await algos[name](player, clonedState);
+			if(!move){
+				GameOver = true;
+				break;
+			}
+			todos.push([name, move]);
+		}
+		for(var [name, move] of todos){
+			state[name].history.push(move);
+		}
+		return GameOver;
+	};
+
+	const run = async ({ x,y,fn,fnOpp,steps, step, passes, pass }) => {
 		const { id } = readBlock.bind(this)({
 			x, y, width: 10, height: 10
 		});
@@ -478,7 +517,11 @@ async function ready(){
 			width: 10 + (offset.width || 0),
 			height: 10 + (offset.height || 0),
 		});
-		const result = await fn({
+		const runGame = game({
+			p1: fn,
+			p2: fnOpp
+		});
+		const result = await runGame({
 			steps, step, passes, pass, state
 		});
 		await render(this.canvasCtx, this.overlayCtx);
@@ -499,12 +542,19 @@ async function ready(){
 		if(this.paused && !this.paused.resolve){
 			delete this.paused;
 		}
-		const { currentFunction, functions } = this;
-		const { steps, pass: passes } = fnOptions.find(x => x.value === currentFunction) || {};
+		const { currentFunction, currentFunctionOpponent, functions } = this;
+		const steps = undefined;
+		const passes = 9999999;
+
 		const fn = functions[currentFunction];
+		const fnOpp = functions[currentFunctionOpponent];
 
 		if(!fn){
 			console.log('Function not defined: ' + currentFunction);
+			return;
+		}
+		if(!fnOpp){
+			console.log('Opponent function not defined: ' + currentFunctionOpponent);
 			return;
 		}
 		//console.log({ steps, passes })
@@ -522,7 +572,7 @@ async function ready(){
 						const status = await this.paused;
 						if(status === 'canceled') break;
 					}
-					gameOver = await run({ x, y, fn, steps, step, pass, passes });
+					gameOver = await run({ x, y, fn, fnOpp, steps, step, pass, passes });
 					step+=1;
 					if(steps && step >= steps) break;
 					if(gameOver) break;
@@ -568,6 +618,7 @@ async function ready(){
 			});
 	};
 	await changeFunction(functionSelector.value);
+	await changeFunctionOpponent(functionSelectorOpponent.value);
 	await loadedCallback.bind(this)();
 
 	await render(this.canvasCtx, this.overlayCtx);
@@ -615,6 +666,7 @@ class Container extends HTMLElement {
 					<i class="fa fa-refresh"></i>
 				</button>
 				<select name="function" id="function-selector"></select>
+				<select id="function-selector-opponent"></select>
 				<button id="screen-expand">
 					<i class="fa fa-expand"></i>
 				</button>
@@ -643,6 +695,7 @@ class Container extends HTMLElement {
 		this.compressButton = this.shadowRoot.querySelector('#screen-compress');
 
 		this.functionSelector = this.shadowRoot.querySelector('#function-selector');
+		this.functionSelectorOpponent = this.shadowRoot.querySelector('#function-selector-opponent');
 		this.functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
 		this.inputFunctions = Array.from(this.functionsSlot.assignedElements({flatten: true})?.[0]?.children);
 
@@ -655,6 +708,10 @@ class Container extends HTMLElement {
 		this.changeFunction = async (which) => {
 			sessionStorage.setItem(this.appName+'-snake-fn', which);
 			this.currentFunction = which;
+		};
+		this.changeFunctionOpponent = async (which) => {
+			sessionStorage.setItem(this.appName+'-snake-fn-opponent', which);
+			this.currentFunctionOpponent = which;
 		};
 		this.ready = ready.bind(this)();
 	}

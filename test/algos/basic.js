@@ -1,8 +1,7 @@
-import {delay, randomArrayItem} from "../../shared/utils.js";
+import {randomArrayItem} from "../../shared/utils.js";
 
-const algo = async (args) => {
-	const { state: {p1, p2, width, height} } = args;
-	await delay(250);
+const algo = async (player, state) => {
+	const {p1, p2, width, height} = state;
 
 	const playerSpace = ([x,y]) => {
 		const [currentX, currentY] = player.history[player.history.length-1];
@@ -28,16 +27,8 @@ const algo = async (args) => {
 		const move = randomArrayItem(allMoves);
 		return move;
 	};
-	let GameOver = false;
-	for(var [name,player] of Object.entries({p1,p2})){
-		const move = randomMove(player);
-		if(!move){
-			GameOver = true;
-			break;
-		}
-		player.history.push(move);
-	}
-	return GameOver;
+
+	return randomMove(player);
 };
 
 export default algo;

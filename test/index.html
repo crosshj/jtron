@@ -18,22 +18,13 @@
 		<span style="font-family: Roboto Mono;"><!-- dumb preload --></span>
 		<snake-container name="tests" x="10" y="10" width="160" height="120">
 			<functions slot="functions">
-				<function name="Random" event="basic" pass=9999999></function>
-				<function name="Random + Flood" event="randWithFlood" pass=9999999></function>
-
-				<function name="Passive vs RandomFlood" event="passiveRandom" pass=9999999></function>
-				<function name="Passive vs Passive" event="passivePassive" pass=9999999></function>
-				<function name="Passive vs Aggressive" event="passiveAggressive" pass=9999999></function>
-				<function name="Aggressive vs Aggressive" event="aggressiveAggressive" pass=9999999></function>
-				<function name="Aggressive vs RandomFlood" event="aggressiveRandom" pass=9999999></function>
-				<function name="Aggressive vs A1k0n2" event="aggressiveA1k0n2" pass=9999999></function>
-				<function name="A1k0n2 vs Aggressive" event="a1k0n2Aggressive" pass=9999999></function>
-				<function name="A1k0n2 vs A1k0n2" event="a1k0n2A1k0n2" pass=9999999></function>
-				<function name="A1k0n2 vs Passive" event="a1k0n2Passive" pass=9999999></function>
-				<function name="Passive vs A1k0n2" event="passiveA1k0n2" pass=9999999></function>
-				<function name="A Star Aggressive vs A1k0n2" event="asAggressiveA1k0n2" pass=9999999></function>
-				<function name="A1k0n2 vs A Star Aggressive" event="A1k0n2AsAggressive" pass=9999999></function>
-				<function name="A Star Aggressive vs A Star Aggressive" event="asAggressiveAsAggressive" pass=9999999></function>
+				<function name="Random" event="random"></function>
+				<function name="Random Flood" event="randomFlood"></function>
+				<function name="Passive" event="passive"></function>
+				<function name="Aggressive" event="aggressive"></function>
+				<function name="A* Passive" event="astarPassive"></function>
+				<function name="A* Aggressive" event="astarAggressive"></function>
+				<function name="A1k0n2" event="a1k0n2"></function>
 			</functions>
 		</snake-container>
 	</body>

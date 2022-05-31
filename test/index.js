@@ -70,63 +70,13 @@ const astarPassive = withAstar;
 const astarAggressive = (...args) => withAstar(...args, true/*aggressive*/ );
 
 SnakeContainer.functions = {
-	basic,
-	randWithFlood: game({
-		p1: randWithFlood,
-		p2: randWithFlood
-	}),
-	passiveRandom: game({
-		p1: passive,
-		p2: randWithFlood
-	}),
-	passivePassive: game({
-		p1: passive,
-		p2: passive
-	}),
-	passiveAggressive: game({
-		p1: passive,
-		p2: aggressive
-	}),
-	aggressiveAggressive: game({
-		p1: aggressive,
-		p2: aggressive
-	}),
-	aggressiveRandom: game({
-		p1: aggressive,
-		p2: randWithFlood
-	}),
-	aggressiveA1k0n2: game({
-		p1: aggressive,
-		p2: a1k0n2
-	}),
-	a1k0n2Aggressive: game({
-		p1: a1k0n2,
-		p2: aggressive,
-	}),
-	a1k0n2Passive: game({
-		p1: a1k0n2,
-		p2: passive,
-	}),
-	a1k0n2A1k0n2: game({
-		p1: a1k0n2,
-		p2: a1k0n2,
-	}),
-	passiveA1k0n2: game({
-		p1: passive,
-		p2: a1k0n2,
-	}),
-	asAggressiveA1k0n2: game({
-		p1: astarAggressive,
-		p2: a1k0n2,
-	}),
-	A1k0n2AsAggressive: game({
-		p1: a1k0n2,
-		p2: astarAggressive,
-	}),
-	asAggressiveAsAggressive: game({
-		p1: astarAggressive,
-		p2: astarAggressive,
-	}),
+	random: basic,
+	randomFlood: randWithFlood,
+	passive,
+	aggressive,
+	astarPassive,
+	astarAggressive,
+	a1k0n2,
 };
 
 SnakeContainer.onLoad(async () => {
