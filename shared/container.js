@@ -40,8 +40,6 @@ const defaultState = {
 };
 let state = clone(defaultState);
 
-const style = ``.trim();
-
 const drawLine = ({ ctx, from, to, color}) => {
 	ctx.beginPath();
 	ctx.strokeStyle = color;
@@ -115,8 +113,6 @@ async function CanvasText(text){
 	// },DELAY);
 }
 
-const SelectOption = ({ name, value}) => `<option value="${value}">${name}</option>`
-
 function ShowOverlayBlock(x,y){
 	const { overlayCtx: ctx, canvasOverlay } = this;
 	const {width, height} = canvasOverlay;
@@ -146,7 +142,6 @@ function setBodyBack(image, callback){
 	if(!image) return setTimeout(setBg, 1);
 	image.addEventListener('load', setBg);
 }
-
 
 function cloneCanvas(oldCanvas) {
 	const newCanvas = document.createElement('canvas');
