@@ -1,17 +1,25 @@
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const clone = (o) => JSON.parse(JSON.stringify(o));
+import './container-css.js';
+import sheet from './container.css' assert { type: 'css' };
+import faSheet from 'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' assert { type: 'css' };
 
-var outerStyleSheet = document.createElement('style');
-outerStyleSheet.id = 'neural-container-style';
-document.head.appendChild(outerStyleSheet);
-outerStyleSheet.sheet.insertRule(`
-	body { overflow: hidden; }
-`, 0);
+import * as handlebars from "./handlebars.js";
+import { delay, clone } from './utils.js';
+const template = await handlebars.compile('./container.hbs');
 
 const width = 52;
 const height = 31;
 const cellDim = 3;
 const overlayMult = cellDim * 6;
+const dims = {
+	canvas: {
+		width,
+		height
+	},
+	overlay: {
+		width: width*overlayMult,
+		height: height*overlayMult
+	}
+};
 
 const defaultState = {
 	width, height,
@@ -32,179 +40,7 @@ const defaultState = {
 };
 let state = clone(defaultState);
 
-const style = `
-:host {
-	position: absolute;
-	left: 0; top: 0; bottom: 0; right: 0;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-.hidden { display: none; }
-
-.background,
-.container {
-	visibility: visible;
-}
-.background.loading,
-.container.loading {
-	visibility: hidden;
-}
-
-#bg-image {
-	position: absolute;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	background-size: cover;
-	filter: blur(10px) brightness(0.2);
-	background-color: transparent;
-	margin: -20px -20px -20px -20px;
-	z-index: -1;
-}
-@media only screen and (max-width: 600px) {
-	#bg-image { display: none; }
-}
-.container {
-	min-height: 100vh;
-	max-width: 820px;
-	width: 100vw;
-	margin: auto;
-	background: #222;
-	display: flex;
-	flex-direction: column;
-}
-
-@media only screen and (min-width: 1100px) {
-	.container {
-		max-width: 900px;
-	}
-}
-::slotted(images) {
-	display: none;
-}
-.canvas-container,
-.canvas-container #canvas1 {
-	position: relative;
-	display: flex;
-	background: #252420;
-}
-.canvas-container canvas {
-	position: absolute;
-	width: 100%;
-	image-rendering: pixelated;
-	top:0;
-	left:0;
-	right:0;
-	bottom: 0;
-}
-.flex-end { display: flex; justify-content: flex-end; }
-
-select {
-	background-color: transparent;
-	border: 0;
-	outline: 0;
-	appearance: none;
-}
-select:focus, select:active {
-	border:0;
-	outline:0;
-}
-.controls, .extend {
-	color: #aaa;
-	font-size: 1.1em;
-	display: flex;
-	user-select: none;
-}
-.controls {
-	background: #333333;
-	justify-content: flex-end;
-	padding: .5em;
-}
-@media only screen and (max-width: 600px) {
-	.controls, .extend { font-size: 0.75em; }
-}
-.controls select {
-	box-shadow:
-		inset 0px 0px 15px 0 #0003,
-		inset 0 0 1px #000d;
-}
-.controls select,
-.controls button {
-	font-size: inherit;
-	color: inherit;
-	background: transparent;
-	border-radius: 3px;
-	border: 0;
-	padding: 0.1em 0.5em;
-}
-.controls select:hover,
-.controls button:hover {
-	cursor: pointer;
-	user-select: none;
-	background: #555;
-	color: white;
-	box-shadow: 0 1px 0 0 black;
-}
-.controls > div {
-	min-width: 70px;
-}
-#function-selector {
-	background: #662928;
-}
-#function-selector-opponent {
-	background: #265673;
-}
-#selectors { margin: auto; }
-
-::slotted(pre), pre {
-	white-space: pre-wrap;
-	padding: 2em;
-	margin: 0;
-}
-@media only screen and (max-width: 600px) {
-	::slotted(pre), pre {
-		font-size: .8em;
-		padding: 0.5em;
-	}
-}
-.rotated-fs {
-	position: absolute;
-	transform: rotate(90deg);
-
-	transform-origin: bottom left;
-	width: 100vh;
-	height: 100vw;
-	margin-top: -100vw;
-	object-fit: cover;
-
-	z-index: 4;
-	visibility: visible;
-	background: #222222;
-}
-.rotated-fs #canvas1 {
-	width: auto;
-	margin: auto;
-	height: 100%;
-}
-.rotated-fs #screen-compress,
-.rotated-fs #fs-refresh {
-	position: absolute;
-	right: 0.75em;
-	width: auto;
-	background: transparent;
-	border: 0;
-	font-size: 1.5em;
-	opacity: .5;
-}
-.rotated-fs #screen-compress { top: 0.75em; }
-.rotated-fs #fs-refresh { top: 3.25em; }
-
-.rotated-fs #canvas-overlay{
-	margin: auto;
-}
-`.trim();
+const style = ``.trim();
 
 const drawLine = ({ ctx, from, to, color}) => {
 	ctx.beginPath();
@@ -311,21 +147,6 @@ function setBodyBack(image, callback){
 	image.addEventListener('load', setBg);
 }
 
-// canvasOverlay.onmousemove = function(e) {
-// 	const ctx = overlayCtx;
-// 	const canvas = canvasOverlay;
-
-// 	const rect = canvas.getBoundingClientRect();
-// 	const scaleX = canvas.width / rect.width;
-// 	const scaleY = canvas.height / rect.height;
-// 	const x = Math.floor((e.clientX - rect.left) * scaleX);
-// 	const y = Math.floor((e.clientY - rect.top) * scaleY);
-
-// 	ShowOverlayBlock(
-// 		Math.floor(x/30),
-// 		Math.floor(y/30)
-// 	);
-// };
 
 function cloneCanvas(oldCanvas) {
 	const newCanvas = document.createElement('canvas');
@@ -429,25 +250,10 @@ function writeBlock({x, y, width, height, imageData }){
 async function ready(){
 	const {
 		refreshButton, fsRefreshButton, runButton, pauseButton,
-		functionSelector, functionSelectorOpponent, inputFunctions, changeFunction, changeFunctionOpponent,
+		functionSelector, functionSelectorOpponent, inputFunctions, changeFunction, changeFunctionOpponent, fnOptions,
 		loadedHandlers, loadedCallback
 	} = this;
 	const _ShowOverlayBlock = ShowOverlayBlock.bind(this);
-
-	const fnOptions = inputFunctions.map(x => {
-		return {
-			name: x.getAttribute('name') || x.getAttribute('event'),
-			value: x.getAttribute('event') || x.getAttribute('name'),
-			steps: x.getAttribute('steps') ? Number(x.getAttribute('steps')) : '',
-			pass: x.getAttribute('pass') ? Number(x.getAttribute('pass')) : ''
-		}
-	});
-	[functionSelector, functionSelectorOpponent].forEach(x => {
-		x.innerHTML = fnOptions
-			.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) )
-			.map(SelectOption)
-			.join('\n');
-	});
 
 	functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || fnOptions[0]?.value;
 	functionSelectorOpponent.value = sessionStorage.getItem(this.appName + '-snake-fn-opponent') || fnOptions[0]?.value;
@@ -627,57 +433,39 @@ class Container extends HTMLElement {
 		//this.shadow = this.attachShadow({ mode: 'closed' });
 		this.attachShadow({ mode: 'open' });
 
-		const fontAwesome = document.createElement("link");
-		fontAwesome.rel = "stylesheet";
-		fontAwesome.href = "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
-		document.head.appendChild(fontAwesome);
+		this.shadowRoot.adoptedStyleSheets = [
+			sheet, faSheet
+		];
 
+		//this is weird, cannot get functions(the dom input) before setting innerHTML
 		this.shadowRoot.innerHTML = `
-		<style>${style}</style>
-
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
-		<div class="background loading"><div id="bg-image"></div></div>
-		<div class="container loading">
-			<div class="canvas-container">
-				<canvas id="canvas1" width="${width}" height="${height}"></canvas>
-				<canvas id="canvas-overlay" width="${width*overlayMult}" height="${height*overlayMult}"></canvas>
-				<button id="screen-compress" class="hidden">
-					<i class="fa fa-compress"></i>
-				</button>
-				<button id="fs-refresh" class="hidden">
-					<i class="fa fa-refresh"></i>
-				</button>
-			</div>
-			<div class="controls">
-				<div>
-					<button id="play">
-						<i class="fa fa-play"></i>
-					</button>
-					<button id="pause" class="hidden">
-						<i class="fa fa-pause"></i>
-					</button>
-					<button id="refresh">
-						<i class="fa fa-refresh"></i>
-					</button>
-				</div>
-				<div id="selectors">
-					<select name="function" id="function-selector"></select>
-					<select id="function-selector-opponent"></select>
-				</div>
-				<div class="flex-end">
-					<button id="screen-expand">
-						<i class="fa fa-expand"></i>
-					</button>
-				</div>
-			</div>
-			<div class="extend"></div>
-			<slot name="notes"></slot>
 			<slot name="functions"></slot>
-		</div>
 		`;
+		this.functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
+		
+		this.inputFunctions = Array.from(this.functionsSlot.assignedElements({flatten: true})?.[0]?.children);
+		this.fnOptions = this.inputFunctions.map(x => {
+			return {
+				name: x.getAttribute('name') || x.getAttribute('event'),
+				value: x.getAttribute('event') || x.getAttribute('name'),
+				steps: x.getAttribute('steps') ? Number(x.getAttribute('steps')) : '',
+				pass: x.getAttribute('pass') ? Number(x.getAttribute('pass')) : ''
+			}
+		}).sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) );
+
+		//this is the second part of the above weirdness, see inefficient but works
+		this.shadowRoot.innerHTML = template({
+			...dims,
+			functions: this.fnOptions
+		});
 		this.functions = [];
 		this.loadedHandlers = [];
+
+
+		this.notesSlot = this.shadowRoot.querySelector('slot[name="notes"]');
+		//this.functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
+
+		//TODO: would be nice if template could handle all this "getting dom elements"
 		this.container = this.shadowRoot.querySelector('.container');
 		this.canvasContainer = this.shadowRoot.querySelector('.canvas-container');
 		this.background = this.shadowRoot.querySelector('.background');
@@ -693,16 +481,12 @@ class Container extends HTMLElement {
 		this.fsRefreshButton = this.shadowRoot.querySelector('#fs-refresh');
 		this.expandButton = this.shadowRoot.querySelector('#screen-expand');
 		this.compressButton = this.shadowRoot.querySelector('#screen-compress');
+		this.extend = this.shadowRoot.querySelector('.extend');
 
 		this.functionSelector = this.shadowRoot.querySelector('#function-selector');
 		this.functionSelectorOpponent = this.shadowRoot.querySelector('#function-selector-opponent');
-		this.functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
-		this.inputFunctions = Array.from(this.functionsSlot.assignedElements({flatten: true})?.[0]?.children);
 
-		this.notesSlot = this.shadowRoot.querySelector('slot[name="notes"]');
 		this.CanvasText = CanvasText.bind(this);
-		
-		this.extend = this.shadowRoot.querySelector('.extend');
 
 		this.appName = this.getAttribute('name');
 		this.changeFunction = async (which) => {

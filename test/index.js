@@ -29,8 +29,9 @@ ideas:
 	- apply algos from other folders in this repo
 	- previously, I had game play repeatedly with winner doing same moves as last win
 	
-	- divider: as a player, can I make some moves that cut available space in two with me on the bigger side?
-		- can => I can perform these moves before other player can stop me
+	- divider: as a player
+		- can I make some moves that cut available space in two with me on the bigger side?
+		- can perform these moves before other player can stop me
 
 todo:
 	- ability to pit two algorithms against each other

@@ -1,0 +1,59 @@
+<span style="font-family: Roboto Mono;">
+	<!-- dumb preload -->
+</span>
+
+<div class="background loading">
+	<div id="bg-image"></div>
+</div>
+<div class="container loading">
+	<div class="canvas-container">
+		<canvas id="canvas1"
+			width="{{canvas.width}}"
+			height="{{canvas.height}}"
+		></canvas>
+		<canvas id="canvas-overlay"
+			width="{{overlay.width}}"
+			height="{{overlay.height}}"
+		></canvas>
+		<button id="screen-compress" class="hidden">
+			<i class="fa fa-compress"></i>
+		</button>
+		<button id="fs-refresh" class="hidden">
+			<i class="fa fa-refresh"></i>
+		</button>
+	</div>
+	<div class="controls">
+		<div>
+			<button id="play">
+				<i class="fa fa-play"></i>
+			</button>
+			<button id="pause" class="hidden">
+				<i class="fa fa-pause"></i>
+			</button>
+			<button id="refresh">
+				<i class="fa fa-refresh"></i>
+			</button>
+		</div>
+		<div id="selectors">
+			<select name="function" id="function-selector">
+				{{#each functions}}
+					<option value="{{this.value}}">{{this.name}}</option>
+				{{/each}}
+			</select>
+			<select id="function-selector-opponent">
+				{{#each functions}}
+					<option value="{{this.value}}">{{this.name}}</option>
+				{{/each}}
+			</select>
+		</div>
+		<div class="flex-end">
+			<button id="screen-expand">
+				<i class="fa fa-expand"></i>
+			</button>
+		</div>
+	</div>
+	<div class="extend"></div>
+
+	<slot name="notes"></slot>
+</div>
+
