@@ -1,3 +1,5 @@
+import { delay, clone } from './utils.js';
+
 export const drawLine = ({ ctx, from, to, color}) => {
 	ctx.beginPath();
 	ctx.strokeStyle = color;

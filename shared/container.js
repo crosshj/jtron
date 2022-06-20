@@ -2,8 +2,9 @@ import './container-css.js';
 import sheet from './container.css' assert { type: 'css' };
 import faSheet from 'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' assert { type: 'css' };
 
-import * as handlebars from "./handlebars.js";
 import { delay, clone } from './utils.js';
+
+import * as handlebars from "./handlebars.js";
 const template = await handlebars.compile('./container.hbs');
 
 import {
