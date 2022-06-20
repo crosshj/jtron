@@ -1,4 +1,4 @@
-import { delay, clone } from './utils.js';
+//import { delay, clone } from './utils.js';
 
 export const drawLine = ({ ctx, from, to, color}) => {
 	ctx.beginPath();

@@ -50,6 +50,22 @@ const defaultState = {
 };
 let state = clone(defaultState);
 
+const ErrorContain = (fn) => {
+	const ErrorDom = document.querySelector('#ErrorIndicator');
+	return async (...args) => {
+		try {
+			return await fn(...args);
+		} catch(e){
+			if(ErrorDom){
+				ErrorDom.innerHTML = e.stack;
+				ErrorDom.style.display = "block";
+			}
+			console.log('error contained');
+			console.error(e);
+		}
+	}
+};
+
 async function ready(){
 	const {
 		refreshButton, fsRefreshButton, runButton, pauseButton,
@@ -108,7 +124,7 @@ async function ready(){
 		return result;
 	};
 
-	runButton.onclick = async () => {
+	runButton.onclick = ErrorContain(async () => {
 		runButton.classList.add('hidden');
 		pauseButton.classList.remove('hidden');
 
@@ -137,7 +153,7 @@ async function ready(){
 			console.log('Opponent function not defined: ' + currentFunctionOpponent);
 			return;
 		}
-		
+
 		// TODO: this could be simplified
 		//console.log({ steps, passes })
 		if(steps === 1 && !passes){
@@ -166,16 +182,17 @@ async function ready(){
 			step=0;
 		}
 		done({ passes });
-	}
-	pauseButton.onclick = async () => {
+	});
+
+	pauseButton.onclick = ErrorContain(async () => {
 		let pausedResolve;
 		this.paused = new Promise((resolve ) =>{ pausedResolve = resolve; });
 		this.paused.resolve = pausedResolve;
 
 		runButton.classList.remove('hidden');
 		pauseButton.classList.add('hidden');
-	};
-	this.expandButton.onclick = async () => {
+	});
+	this.expandButton.onclick = ErrorContain(async () => {
 		this.compressButton.classList.remove('hidden');
 		this.expandButton.classList.add('hidden');
 		this.fsRefreshButton.classList.remove('hidden');
@@ -186,8 +203,8 @@ async function ready(){
 			.catch(err => {
 				alert(`An error occurred while trying to switch into fullscreen mode: ${err.message} (${err.name})`);
 			});
-	};
-	this.compressButton.onclick = async () => {
+	});
+	this.compressButton.onclick = ErrorContain(async () => {
 		this.expandButton.classList.remove('hidden');
 		this.fsRefreshButton.classList.add('hidden');
 		this.compressButton.classList.add('hidden');
@@ -198,7 +215,7 @@ async function ready(){
 			.catch(err => {
 				alert(`An error occurred while trying to switch into fullscreen mode: ${err.message} (${err.name})`);
 			});
-	};
+	});
 	await changeFunction(functionSelector.value);
 	await changeFunctionOpponent(functionSelectorOpponent.value);
 	await loadedCallback.bind(this)();
@@ -212,6 +229,11 @@ class Container extends HTMLElement {
 		super();
 		//this.shadow = this.attachShadow({ mode: 'closed' });
 		this.attachShadow({ mode: 'open' });
+		
+		const errorDom = document.createElement('pre');
+		errorDom.id = "ErrorIndicator";
+		errorDom.style.display = "none";
+		document.body.append(errorDom);
 
 		this.shadowRoot.adoptedStyleSheets = [
 			sheet, faSheet
