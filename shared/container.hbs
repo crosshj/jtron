@@ -3,51 +3,51 @@
 </span>
 
 <div class="background loading">
-	<div id="bg-image"></div>
+	<div id="bgImage"></div>
 </div>
 <div class="container loading">
 	<div class="canvas-container">
-		<canvas id="canvas1"
+		<canvas id="canvas"
 			width="{{canvas.width}}"
 			height="{{canvas.height}}"
 		></canvas>
-		<canvas id="canvas-overlay"
+		<canvas id="canvasOverlay"
 			width="{{overlay.width}}"
 			height="{{overlay.height}}"
 		></canvas>
-		<button id="screen-compress" class="hidden">
+		<button id="compressButton" class="hidden">
 			<i class="fa fa-compress"></i>
 		</button>
-		<button id="fs-refresh" class="hidden">
+		<button id="fsRefreshButton" class="hidden">
 			<i class="fa fa-refresh"></i>
 		</button>
 	</div>
 	<div class="controls">
 		<div>
-			<button id="play">
+			<button id="runButton">
 				<i class="fa fa-play"></i>
 			</button>
-			<button id="pause" class="hidden">
+			<button id="pauseButton" class="hidden">
 				<i class="fa fa-pause"></i>
 			</button>
-			<button id="refresh">
+			<button id="refreshButton">
 				<i class="fa fa-refresh"></i>
 			</button>
 		</div>
-		<div id="selectors">
-			<select name="function" id="function-selector">
-				{{#each functions}}
+		<div class="selectors">
+			<select id="functionSelector">
+				{{#each functionOpts}}
 					<option value="{{this.value}}">{{this.name}}</option>
 				{{/each}}
 			</select>
-			<select id="function-selector-opponent">
-				{{#each functions}}
+			<select id="functionSelectorOpponent">
+				{{#each functionOpts}}
 					<option value="{{this.value}}">{{this.name}}</option>
 				{{/each}}
 			</select>
 		</div>
 		<div class="flex-end">
-			<button id="screen-expand">
+			<button id="expandButton">
 				<i class="fa fa-expand"></i>
 			</button>
 		</div>

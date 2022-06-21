@@ -69,21 +69,15 @@ const ErrorContain = (fn) => {
 async function ready(){
 	const {
 		refreshButton, fsRefreshButton, runButton, pauseButton,
-		functionSelector, functionSelectorOpponent, inputFunctions, changeFunction, changeFunctionOpponent, fnOptions,
+		currentFunction, currentFunctionOpponent,
 		loadedHandlers, loadedCallback
 	} = this;
 	const _ShowOverlayBlock = ShowOverlayBlock.bind(this);
 
-	functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || fnOptions[0]?.value;
-	functionSelectorOpponent.value = sessionStorage.getItem(this.appName + '-snake-fn-opponent') || fnOptions[0]?.value;
-
-	functionSelector.onchange = () => changeFunction(functionSelector.value);
-	functionSelectorOpponent.onchange = () => changeFunctionOpponent(functionSelectorOpponent.value);
-
 	const refreshAction = async () => {
 		//_ShowOverlayBlock();
 		state = clone(defaultState);
-		await render(this.canvasCtx, this.overlayCtx, dims, state);
+		await render(this.canvasCtx, this.canvasOverlayCtx, dims, state);
 		runButton.classList.remove('hidden');
 		pauseButton.classList.add('hidden');
 		this.paused = 'canceled';
@@ -120,7 +114,7 @@ async function ready(){
 		const result = await runGame({
 			steps, step, passes, pass, state
 		});
-		await render(this.canvasCtx, this.overlayCtx, dims, state);
+		await render(this.canvasCtx, this.canvasOverlayCtx, dims, state);
 		return result;
 	};
 
@@ -138,12 +132,11 @@ async function ready(){
 		if(this.paused && !this.paused.resolve){
 			delete this.paused;
 		}
-		const { currentFunction, currentFunctionOpponent, functions } = this;
 		const steps = undefined;
 		const passes = 9999999;
 
-		const fn = functions[currentFunction];
-		const fnOpp = functions[currentFunctionOpponent];
+		const fn = currentFunction();
+		const fnOpp = currentFunctionOpponent();
 
 		if(!fn){
 			console.log('Function not defined: ' + currentFunction);
@@ -216,11 +209,9 @@ async function ready(){
 				alert(`An error occurred while trying to switch into fullscreen mode: ${err.message} (${err.name})`);
 			});
 	});
-	await changeFunction(functionSelector.value);
-	await changeFunctionOpponent(functionSelectorOpponent.value);
 	await loadedCallback.bind(this)();
 
-	await render(this.canvasCtx, this.overlayCtx, dims, state);
+	await render(this.canvasCtx, this.canvasOverlayCtx, dims, state);
 }
 
 
@@ -229,7 +220,10 @@ class Container extends HTMLElement {
 		super();
 		//this.shadow = this.attachShadow({ mode: 'closed' });
 		this.attachShadow({ mode: 'open' });
-		
+
+		this.functions = [];
+		this.loadedHandlers = [];
+
 		const errorDom = document.createElement('pre');
 		errorDom.id = "ErrorIndicator";
 		errorDom.style.display = "none";
@@ -239,14 +233,14 @@ class Container extends HTMLElement {
 			sheet, faSheet
 		];
 
-		//this is weird, cannot get functions(the dom input) before setting innerHTML
 		this.shadowRoot.innerHTML = `
 			<slot name="functions"></slot>
 		`;
-		this.functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
-		
-		this.inputFunctions = Array.from(this.functionsSlot.assignedElements({flatten: true})?.[0]?.children);
-		this.fnOptions = this.inputFunctions.map(x => {
+		const functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
+		const inputFunctions = Array.from(
+			functionsSlot.assignedElements({flatten: true})?.[0]?.children
+		);
+		const functionOpts = inputFunctions.map(x => {
 			return {
 				name: x.getAttribute('name') || x.getAttribute('event'),
 				value: x.getAttribute('event') || x.getAttribute('name'),
@@ -255,50 +249,46 @@ class Container extends HTMLElement {
 			}
 		}).sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) );
 
-		//this is the second part of the above weirdness, see inefficient but works
-		this.shadowRoot.innerHTML = template({
-			...dims,
-			functions: this.fnOptions
-		});
-		this.functions = [];
-		this.loadedHandlers = [];
+		const templateDom = document.createElement('template');
+		templateDom.innerHTML = template({ ...dims, functionOpts });
+		this.shadowRoot.appendChild(templateDom.content.cloneNode(true));
 
+		const idMatches = templateDom.innerHTML.match(/(?<=id=")([^"]*)(?=")/g);
+		for(var id of idMatches){
+			const el = this.shadowRoot.getElementById(id);
+			this[id] = el;
+			if(el?.tagName === "CANVAS"){
+				this[id+'Ctx'] = el.getContext("2d");
+			}
+		}
 
 		this.notesSlot = this.shadowRoot.querySelector('slot[name="notes"]');
 		//this.functionsSlot = this.shadowRoot.querySelector('slot[name="functions"]');
 
-		//TODO: would be nice if template could handle all this "getting dom elements"
 		this.container = this.shadowRoot.querySelector('.container');
-		this.canvasContainer = this.shadowRoot.querySelector('.canvas-container');
+		this.canvasContainer = this.shadowRoot.querySelector('.canvasContainer');
 		this.background = this.shadowRoot.querySelector('.background');
-		this.bgImage = this.shadowRoot.querySelector('#bg-image');
-		this.canvas = this.shadowRoot.querySelector('.container #canvas1');
-		this.canvasCtx = this.canvas.getContext("2d");
-		this.canvasOverlay = this.shadowRoot.querySelector('.container #canvas-overlay');
-		this.overlayCtx = this.canvasOverlay.getContext("2d");
-
-		this.runButton = this.shadowRoot.querySelector('#play');
-		this.pauseButton = this.shadowRoot.querySelector('#pause');
-		this.refreshButton = this.shadowRoot.querySelector('#refresh');
-		this.fsRefreshButton = this.shadowRoot.querySelector('#fs-refresh');
-		this.expandButton = this.shadowRoot.querySelector('#screen-expand');
-		this.compressButton = this.shadowRoot.querySelector('#screen-compress');
 		this.extend = this.shadowRoot.querySelector('.extend');
-
-		this.functionSelector = this.shadowRoot.querySelector('#function-selector');
-		this.functionSelectorOpponent = this.shadowRoot.querySelector('#function-selector-opponent');
-
 		this.CanvasText = CanvasText.bind(this);
 
 		this.appName = this.getAttribute('name');
-		this.changeFunction = async (which) => {
+
+		this.functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || (functions[0]||{}).value;
+		this.functionSelectorOpponent.value = sessionStorage.getItem(this.appName + '-snake-fn-opponent') || (functions[0]||{}).value;
+
+		this.functionSelector.onchange = ErrorContain(async () => {
+			const which = this.functionSelector.value;
 			sessionStorage.setItem(this.appName+'-snake-fn', which);
 			this.currentFunction = which;
-		};
-		this.changeFunctionOpponent = async (which) => {
+		});
+		this.functionSelectorOpponent.onchange = ErrorContain(async () => {
+			const which = this.functionSelectorOpponent.value;
 			sessionStorage.setItem(this.appName+'-snake-fn-opponent', which);
 			this.currentFunctionOpponent = which;
-		};
+		});
+		this.currentFunction = () => this.functions[this.functionSelector.value];
+		this.currentFunctionOpponent = () => this.functions[this.functionSelectorOpponent.value];
+
 		this.ready = ready.bind(this)();
 	}
 	connectedCallback() {}

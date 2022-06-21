@@ -16,7 +16,7 @@
 	visibility: hidden;
 }
 
-#bg-image {
+#bgImage {
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
@@ -29,7 +29,7 @@
 	z-index: -1;
 }
 @media only screen and (max-width: 600px) {
-	#bg-image { display: none; }
+	#bgImage { display: none; }
 }
 .container {
 	min-height: 100vh;
@@ -50,7 +50,7 @@
 	display: none;
 }
 .canvas-container,
-.canvas-container #canvas1 {
+.canvas-container #canvas {
 	position: relative;
 	display: flex;
 	background: #252420;
@@ -115,13 +115,13 @@ select:focus, select:active {
 .controls > div {
 	min-width: 70px;
 }
-#function-selector {
+#functionSelector {
 	background: #662928;
 }
-#function-selector-opponent {
+#functionSelectorOpponent {
 	background: #265673;
 }
-#selectors { margin: auto; }
+.selectors { margin: auto; }
 
 ::slotted(pre), pre {
 	white-space: pre-wrap;
@@ -148,13 +148,13 @@ select:focus, select:active {
 	visibility: visible;
 	background: #222222;
 }
-.rotated-fs #canvas1 {
+.rotated-fs #canvas {
 	width: auto;
 	margin: auto;
 	height: 100%;
 }
-.rotated-fs #screen-compress,
-.rotated-fs #fs-refresh {
+.rotated-fs #compressButton,
+.rotated-fs #fsRefreshButton {
 	position: absolute;
 	right: 0.75em;
 	width: auto;
@@ -163,9 +163,9 @@ select:focus, select:active {
 	font-size: 1.5em;
 	opacity: .5;
 }
-.rotated-fs #screen-compress { top: 0.75em; }
-.rotated-fs #fs-refresh { top: 3.25em; }
+.rotated-fs #compressButton { top: 0.75em; }
+.rotated-fs #fsRefreshButton { top: 3.25em; }
 
-.rotated-fs #canvas-overlay{
+.rotated-fs #canvasOverlay{
 	margin: auto;
 }
