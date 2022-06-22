@@ -273,8 +273,8 @@ class Container extends HTMLElement {
 
 		this.appName = this.getAttribute('name');
 
-		this.functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || (functions[0]||{}).value;
-		this.functionSelectorOpponent.value = sessionStorage.getItem(this.appName + '-snake-fn-opponent') || (functions[0]||{}).value;
+		this.functionSelector.value = sessionStorage.getItem(this.appName + '-snake-fn') || (functionOpts[0]||{}).value;
+		this.functionSelectorOpponent.value = sessionStorage.getItem(this.appName + '-snake-fn-opponent') || (functionOpts[0]||{}).value;
 
 		this.functionSelector.onchange = ErrorContain(async () => {
 			const which = this.functionSelector.value;
