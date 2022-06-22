@@ -1,7 +1,7 @@
 import { clone } from '../shared/utils.js';
 import '../shared/container.js';
 import random from './algos/basic.js';
-import randFlood from './algos/randWithFlood.js';
+import randomFlood from './algos/randWithFlood.js';
 import randFloodDist from './algos/randFloodDist.js';
 import a1k0n2 from './algos/a1k0n2.js';
 import withAstar from './algos/withAstar.js';
